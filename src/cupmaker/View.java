@@ -25,42 +25,47 @@ public class View extends JFrame implements ActionListener {
 
     private Cup cupPanel;
     
-    private JLabel LabelTopWidth, LabelBottomWidth, LabelHeight, LabelCalculation;
-    private JTextField TextFieldTopWidth, TextFieldBottomWidth, TextFieldHeight;
-    private JButton ButtonCalculate, ButtonReset;
+    private JLabel LabelTopWidth, LabelBottomWidth, LabelHeight, LabelCalculation, LabelVolume;
+    private JTextField TextFieldTopWidth, TextFieldBottomWidth, TextFieldHeight, TextFieldVolume;
+    private JButton ButtonCalculate, ButtonReset, ButtonInfo;
     
     public View(){
         setTitle("Cupmaker");
         setSize(275,500);
         setLayout(new FlowLayout());
-        setResizable(false);
+        setResizable(true);
         
         LabelTopWidth = new JLabel("Breedte bovenkant in mm:");
         LabelBottomWidth = new JLabel("Breedte onderkant in mm:");
         LabelHeight = new JLabel("Hoogte in mm:");
+        LabelVolume = new JLabel("Inhoud in cc:");
         
         TextFieldTopWidth = new JTextField(5);
         TextFieldBottomWidth = new JTextField(5);
         TextFieldHeight = new JTextField(5);
+        TextFieldVolume = new JTextField(5);
         
-        ButtonCalculate = new JButton("Bereken");
+        ButtonCalculate = new JButton("Toevoegen");
         ButtonCalculate.addActionListener(this);
         
         ButtonReset = new JButton("Reset");
         ButtonReset.addActionListener(this);
         
-        LabelCalculation = new JLabel("0 cc");
-        
+        ButtonInfo = new JButton("Statestieken");
+        ButtonInfo.addActionListener(this);
+                
         add(LabelTopWidth);
         add(TextFieldTopWidth);
         add(LabelBottomWidth);
         add(TextFieldBottomWidth);
         add(LabelHeight);
         add(TextFieldHeight);
+        add(LabelVolume);
+        add(TextFieldVolume);
         
         add(ButtonCalculate);
         add(ButtonReset);
-        add(LabelCalculation);
+        add(ButtonInfo);
         
         cupPanel = new Cup(300, 400);
         add(cupPanel, BorderLayout.SOUTH);
@@ -73,7 +78,10 @@ public class View extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == ButtonCalculate){
-            int wt, wb, h = 0;
+            int wt = 0;
+            int wb = 0;
+            int h = 0;
+            int v = 0;
             
             try {
                 wt = parseInt(TextFieldTopWidth.getText());
@@ -92,23 +100,44 @@ public class View extends JFrame implements ActionListener {
             try {
                 h = parseInt(TextFieldHeight.getText());
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "De hoogte moet een cijfer zijn.");
+                if(!TextFieldHeight.getText().equals("")){
+                    JOptionPane.showMessageDialog(this, "De hoogte moet een cijfer zijn.");
+                    return;
+                } 
+            }
+            
+            try {
+                v = parseInt(TextFieldVolume.getText());
+            } catch (NumberFormatException ex) {
+                if(!TextFieldVolume.getText().equals("")){
+                    JOptionPane.showMessageDialog(this, "Het volume moet een cijfer zijn.");
+                    return;
+                } 
+            }
+            
+            if(h > 0) {
+                cupPanel.addToCup(wt, wb, h);
+            } else if(v > 0){
+                cupPanel.addToCupByVolume(wt, wb, v);
+            } else {
+                JOptionPane.showMessageDialog(this, "Stel of het volume of de hoogte in als cijfer.");
                 return;
             }
             
-            cupPanel.addToCup(wt, wb, h);
             TextFieldTopWidth.setText("");
             TextFieldBottomWidth.setText("");
             TextFieldHeight.setText("");
-            
-            LabelCalculation.setText(Math.round(cupPanel.getVolume()) + " cc");
+            TextFieldVolume.setText("");
         }
         if (e.getSource() == ButtonReset){
             cupPanel.reset();
             TextFieldTopWidth.setText("");
             TextFieldBottomWidth.setText("");
             TextFieldHeight.setText("");
-            LabelCalculation.setText("0 cc");
+            TextFieldVolume.setText("");
+        }
+        if (e.getSource() == ButtonInfo){
+            JOptionPane.showMessageDialog(this, "Onderdelen van boven naar beneden:\n" + cupPanel.toString());
         }
         repaint();
     }

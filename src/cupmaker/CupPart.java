@@ -18,6 +18,12 @@ public class CupPart {
         this.Height = h;
     }
     
+    public CupPart(int wt, int wb, float v){
+        this.WidthTop = wt;
+        this.WidthBottom = wb;
+        this.Height = this.getHeight(v);
+    }
+    
     //returns the volume in mililiters
     public float getVolume(){
         if (this.WidthBottom == this.WidthTop){
@@ -49,5 +55,33 @@ public class CupPart {
         double answer = pi/3*((radius1*radius1)+(radius2*radius2)+(radius1*radius2))*Height;
         
         return (float) answer/1000;
+    }
+    
+    private int getHeight(float v){
+        if (this.WidthBottom == this.WidthTop){
+            return this.getHeightCilinder(v);
+        }
+        return this.getHeightConePart(v);
+    }
+    
+    private int getHeightCilinder(float v) {
+        
+        float radius = (float) (WidthTop/2);
+        double pi = Math.PI;
+        
+        return (int) Math.round((v/(pi*((radius)*(radius))))*1000);
+    }
+    
+    private int getHeightConePart(float v) {
+        float radius1 = (float) (WidthTop/2);
+        float radius2 = (float) (WidthBottom/2);
+        double pi = Math.PI;
+        
+        return (int) Math.round((v/(pi/3*((radius1*radius1)+(radius2*radius2)+(radius1*radius2))))*1000);
+    }
+
+    @Override
+    public String toString() {
+        return "Bekerdeel(Breedte boven: " + WidthTop + " , Breedte onder: " + WidthBottom + " ,Hoogte: " + Height + ", Inhoud: " + this.getVolume() + ")";
     }
 }

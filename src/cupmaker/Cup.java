@@ -29,6 +29,10 @@ public class Cup extends JPanel {
         this.Parts.add(new CupPart(wt, wb, h));
     }
     
+    public void addToCupByVolume(int wt, int wb, float v){
+        this.Parts.add(new CupPart(wt, wb, v));
+    }
+    
     public float getVolume(){
         float totalVolume = 0;
         for (CupPart part : Parts){
@@ -39,6 +43,31 @@ public class Cup extends JPanel {
     
     public void reset(){
         Parts = new ArrayList<>();
+    }
+
+    @Override
+    public String toString() {
+        String output = "";
+        int width = 0;
+        int height = 0;
+        float volume = 0;
+        
+        for(CupPart part : Parts){
+            output += "\n" + part.toString();
+            volume+=part.getVolume();
+            height+=part.Height;
+            
+            if(part.WidthBottom > width){
+                width = part.WidthBottom;
+            }
+            if(part.WidthTop > width){
+                width = part.WidthTop;
+            }
+        }
+        
+        output+="\n\nTotaal(Breedte: " + width + " ,Hoogte: " + height + ", Inhoud: " + volume + ")";
+        
+        return output;
     }
     
     public void paintComponent(Graphics g) {
